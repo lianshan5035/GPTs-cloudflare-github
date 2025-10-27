@@ -9,6 +9,7 @@
 - 🤖 **GPTs集成**: 与OpenAI GPTs进行深度集成
 - ☁️ **Cloudflare服务**: 利用Cloudflare的CDN、Workers等服务
 - 📦 **GitHub集成**: 自动化GitHub仓库管理和CI/CD流程
+- 🎵 **TTS语音合成**: 集成本地TTS服务，支持语音生成
 - 🔄 **自动化工作流**: 实现多平台间的自动化联动
 
 ## 项目结构
@@ -16,6 +17,13 @@
 ```
 GPTs-cloudflare-github/
 ├── src/                    # 源代码目录
+│   ├── index.js           # 主入口文件
+│   ├── gpts-client.js     # GPTs客户端
+│   ├── cloudflare-client.js # Cloudflare客户端
+│   ├── github-client.js   # GitHub客户端
+│   ├── tts-client.js      # TTS客户端
+│   └── integration-manager.js # 集成管理器
+├── tts-integration/        # TTS服务集成
 ├── config/                 # 配置文件
 ├── docs/                   # 项目文档
 ├── scripts/                # 脚本文件
@@ -32,6 +40,7 @@ GPTs-cloudflare-github/
 - Cloudflare账户
 - GitHub账户
 - OpenAI API密钥
+- 本地TTS服务（可选）
 
 ### 安装步骤
 
@@ -92,6 +101,35 @@ const client = new GPTsCloudflareGitHub({
 // 使用示例
 await client.deployToCloudflare();
 await client.updateGitHubRepo();
+```
+
+### TTS语音合成使用
+
+```javascript
+// 生成单个语音
+const speechResult = await client.generateSpeech('你好，这是TTS测试');
+
+// 批量生成语音
+const texts = ['文本1', '文本2', '文本3'];
+const batchResult = await client.generateBatchSpeech(texts);
+
+// 获取TTS服务状态
+const ttsStatus = await client.getTTSStatus();
+```
+
+### GPTs + TTS 联动
+
+```javascript
+// 使用GPTs生成内容
+const content = await client.gptsClient.query('生成一段介绍文字');
+
+// 转换为语音
+const speech = await client.generateSpeech(content.content);
+
+// 同步到GitHub
+await client.updateGitHubRepo({
+  content: `# 生成的内容\n\n${content.content}\n\n## 语音文件\n\n${speech.filename}`
+});
 ```
 
 ## 开发指南

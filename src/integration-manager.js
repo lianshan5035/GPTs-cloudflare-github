@@ -7,6 +7,7 @@ export class IntegrationManager {
     this.gpts = clients.gpts;
     this.cloudflare = clients.cloudflare;
     this.github = clients.github;
+    this.tts = clients.tts;
   }
 
   /**
@@ -285,6 +286,7 @@ export class IntegrationManager {
       gpts: this.gpts.isReady,
       cloudflare: this.cloudflare.isReady,
       github: this.github.isReady,
+      tts: this.tts.isReady,
       timestamp: new Date().toISOString()
     };
   }

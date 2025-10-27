@@ -8,6 +8,7 @@ import dotenv from 'dotenv';
 import { GPTsClient } from './gpts-client.js';
 import { CloudflareClient } from './cloudflare-client.js';
 import { GitHubClient } from './github-client.js';
+import { TTSClient } from './tts-client.js';
 import { IntegrationManager } from './integration-manager.js';
 
 // 加载环境变量
@@ -34,12 +35,18 @@ class GPTsCloudflareGitHub {
       token: this.config.githubToken,
       repo: this.config.githubRepo
     });
+    this.ttsClient = new TTSClient({
+      baseUrl: this.config.ttsBaseUrl || 'http://127.0.0.1:8000',
+      ttsUrl: this.config.ttsServiceUrl || 'http://127.0.0.1:5001',
+      externalUrl: this.config.ttsExternalUrl || 'https://ai.maraecowell.com'
+    });
 
     // 初始化集成管理器
     this.integrationManager = new IntegrationManager({
       gpts: this.gptsClient,
       cloudflare: this.cloudflareClient,
-      github: this.githubClient
+      github: this.githubClient,
+      tts: this.ttsClient
     });
   }
 
@@ -61,6 +68,7 @@ class GPTsCloudflareGitHub {
       console.log(`   - GPTs客户端: ${this.gptsClient.isReady ? '✅ 就绪' : '❌ 未就绪'}`);
       console.log(`   - Cloudflare客户端: ${this.cloudflareClient.isReady ? '✅ 就绪' : '❌ 未就绪'}`);
       console.log(`   - GitHub客户端: ${this.githubClient.isReady ? '✅ 就绪' : '❌ 未就绪'}`);
+      console.log(`   - TTS客户端: ${this.ttsClient.isReady ? '✅ 就绪' : '❌ 未就绪'}`);
       
       return true;
     } catch (error) {
@@ -88,7 +96,8 @@ class GPTsCloudflareGitHub {
     await Promise.all([
       this.gptsClient.initialize(),
       this.cloudflareClient.initialize(),
-      this.githubClient.initialize()
+      this.githubClient.initialize(),
+      this.ttsClient.initialize()
     ]);
   }
 
@@ -129,6 +138,27 @@ class GPTsCloudflareGitHub {
   }
 
   /**
+   * 生成语音
+   */
+  async generateSpeech(text, options = {}) {
+    return await this.ttsClient.generateSpeech(text, options);
+  }
+
+  /**
+   * 批量生成语音
+   */
+  async generateBatchSpeech(texts, options = {}) {
+    return await this.ttsClient.generateBatchSpeech(texts, options);
+  }
+
+  /**
+   * 获取TTS服务状态
+   */
+  async getTTSStatus() {
+    return await this.ttsClient.getServiceStatus();
+  }
+
+  /**
    * 获取服务状态
    */
   getStatus() {
@@ -136,6 +166,7 @@ class GPTsCloudflareGitHub {
       gpts: this.gptsClient.isReady,
       cloudflare: this.cloudflareClient.isReady,
       github: this.githubClient.isReady,
+      tts: this.ttsClient.isReady,
       timestamp: new Date().toISOString()
     };
   }

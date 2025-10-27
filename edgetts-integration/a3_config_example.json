@@ -1,0 +1,33 @@
+{
+  "product_name": "Dark Spot Patch",
+  "scripts": [
+    "Transform your skin with our revolutionary dark spot patch!",
+    "Say goodbye to dark spots forever with our advanced formula.",
+    "Get ready for flawless, even-toned skin in just 7 days!",
+    "Experience visible results from the very first application.",
+    "Join thousands of satisfied customers who trust our solution."
+  ],
+  "emotion": "Excited",
+  "voice": "en-US-JennyNeural",
+  "a3_standards": {
+    "version": "7.2.3",
+    "compliance": "完全符合GPTs-A3文档规范",
+    "emotion_types": 12,
+    "batch_size": 80,
+    "total_batches": 10,
+    "total_scripts": 800,
+    "duration_range": "35-60秒",
+    "purity_standard": "≥99.9%"
+  },
+  "dynamic_parameters": {
+    "rate_range": [-25, 35],
+    "pitch_range": [-15, 20],
+    "volume_range": [-50, 50],
+    "algorithm": "正弦波+斐波那契+素数序列"
+  },
+  "compliance_rules": {
+    "forbidden_words": ["miracle", "guaranteed", "cure", "permanent"],
+    "required_disclaimers": ["Results may vary"],
+    "tiktok_compliant": true
+  }
+}

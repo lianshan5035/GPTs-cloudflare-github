@@ -9,6 +9,7 @@ import { GPTsClient } from './gpts-client.js';
 import { CloudflareClient } from './cloudflare-client.js';
 import { GitHubClient } from './github-client.js';
 import { TTSClient } from './tts-client.js';
+import { EdgeTTSIntegration } from './edgetts-integration.js';
 import { IntegrationManager } from './integration-manager.js';
 
 // 加载环境变量
@@ -40,13 +41,19 @@ class GPTsCloudflareGitHub {
       ttsUrl: this.config.ttsServiceUrl || 'http://127.0.0.1:5001',
       externalUrl: this.config.ttsExternalUrl || 'https://ai.maraecowell.com'
     });
+    this.edgettsIntegration = new EdgeTTSIntegration({
+      baseUrl: this.config.ttsBaseUrl || 'http://127.0.0.1:8000',
+      ttsUrl: this.config.ttsServiceUrl || 'http://127.0.0.1:5001',
+      externalUrl: this.config.ttsExternalUrl || 'https://ai.maraecowell.com'
+    });
 
     // 初始化集成管理器
     this.integrationManager = new IntegrationManager({
       gpts: this.gptsClient,
       cloudflare: this.cloudflareClient,
       github: this.githubClient,
-      tts: this.ttsClient
+      tts: this.ttsClient,
+      edgetts: this.edgettsIntegration
     });
   }
 
@@ -69,6 +76,7 @@ class GPTsCloudflareGitHub {
       console.log(`   - Cloudflare客户端: ${this.cloudflareClient.isReady ? '✅ 就绪' : '❌ 未就绪'}`);
       console.log(`   - GitHub客户端: ${this.githubClient.isReady ? '✅ 就绪' : '❌ 未就绪'}`);
       console.log(`   - TTS客户端: ${this.ttsClient.isReady ? '✅ 就绪' : '❌ 未就绪'}`);
+      console.log(`   - EdgeTTS集成: ${this.edgettsIntegration.isReady ? '✅ 就绪' : '❌ 未就绪'}`);
       
       return true;
     } catch (error) {
@@ -97,7 +105,8 @@ class GPTsCloudflareGitHub {
       this.gptsClient.initialize(),
       this.cloudflareClient.initialize(),
       this.githubClient.initialize(),
-      this.ttsClient.initialize()
+      this.ttsClient.initialize(),
+      this.edgettsIntegration.initialize()
     ]);
   }
 
@@ -159,6 +168,41 @@ class GPTsCloudflareGitHub {
   }
 
   /**
+   * 使用A3标准生成语音
+   */
+  async generateA3Speech(text, emotion = 'Friendly', options = {}) {
+    return await this.edgettsIntegration.generateA3Speech(text, emotion, options);
+  }
+
+  /**
+   * 批量A3语音生成
+   */
+  async generateBatchA3Speech(texts, emotion = 'Friendly', options = {}) {
+    return await this.edgettsIntegration.generateBatchA3Speech(texts, emotion, options);
+  }
+
+  /**
+   * Excel文件上传和自动生成
+   */
+  async uploadExcelAndGenerate(file, emotion = 'Friendly', options = {}) {
+    return await this.edgettsIntegration.uploadExcelAndGenerate(file, emotion, options);
+  }
+
+  /**
+   * 端到端测试
+   */
+  async endToEndTest() {
+    return await this.edgettsIntegration.endToEndTest();
+  }
+
+  /**
+   * 获取A3情绪配置
+   */
+  getA3EmotionConfig() {
+    return this.edgettsIntegration.getA3EmotionConfig();
+  }
+
+  /**
    * 获取服务状态
    */
   getStatus() {
@@ -167,6 +211,7 @@ class GPTsCloudflareGitHub {
       cloudflare: this.cloudflareClient.isReady,
       github: this.githubClient.isReady,
       tts: this.ttsClient.isReady,
+      edgetts: this.edgettsIntegration.isReady,
       timestamp: new Date().toISOString()
     };
   }

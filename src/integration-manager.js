@@ -8,6 +8,7 @@ export class IntegrationManager {
     this.cloudflare = clients.cloudflare;
     this.github = clients.github;
     this.tts = clients.tts;
+    this.edgetts = clients.edgetts;
   }
 
   /**
@@ -287,6 +288,7 @@ export class IntegrationManager {
       cloudflare: this.cloudflare.isReady,
       github: this.github.isReady,
       tts: this.tts.isReady,
+      edgetts: this.edgetts.isReady,
       timestamp: new Date().toISOString()
     };
   }

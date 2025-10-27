@@ -10,6 +10,8 @@
 - ☁️ **Cloudflare服务**: 利用Cloudflare的CDN、Workers等服务
 - 📦 **GitHub集成**: 自动化GitHub仓库管理和CI/CD流程
 - 🎵 **TTS语音合成**: 集成本地TTS服务，支持语音生成
+- 🎤 **EdgeTTS A3标准**: 支持A3标准12种情绪参数语音生成
+- 📊 **Excel批量处理**: 支持Excel文件上传和自动语音生成
 - 🔄 **自动化工作流**: 实现多平台间的自动化联动
 
 ## 项目结构
@@ -22,7 +24,9 @@ GPTs-cloudflare-github/
 │   ├── cloudflare-client.js # Cloudflare客户端
 │   ├── github-client.js   # GitHub客户端
 │   ├── tts-client.js      # TTS客户端
+│   ├── edgetts-integration.js # EdgeTTS集成模块
 │   └── integration-manager.js # 集成管理器
+├── edgetts-integration/    # EdgeTTS A3标准集成
 ├── tts-integration/        # TTS服务集成
 ├── config/                 # 配置文件
 ├── docs/                   # 项目文档
@@ -117,19 +121,42 @@ const batchResult = await client.generateBatchSpeech(texts);
 const ttsStatus = await client.getTTSStatus();
 ```
 
-### GPTs + TTS 联动
+### EdgeTTS A3标准语音生成
+
+```javascript
+// 使用A3标准生成语音
+const speechResult = await client.generateA3Speech('你好，这是A3标准语音测试', 'Excited');
+
+// 批量A3语音生成
+const texts = ['文本1', '文本2', '文本3'];
+const batchResult = await client.generateBatchA3Speech(texts, 'Confident');
+
+// Excel文件上传和自动生成
+const fileInput = document.getElementById('fileInput');
+const result = await client.uploadExcelAndGenerate(fileInput.files[0], 'Friendly');
+```
+
+### GPTs + EdgeTTS 联动
 
 ```javascript
 // 使用GPTs生成内容
-const content = await client.gptsClient.query('生成一段介绍文字');
+const content = await client.gptsClient.query('生成一段产品介绍文字');
 
-// 转换为语音
-const speech = await client.generateSpeech(content.content);
+// 使用A3标准转换为语音
+const speech = await client.generateA3Speech(content.content, 'Confident');
 
 // 同步到GitHub
 await client.updateGitHubRepo({
-  content: `# 生成的内容\n\n${content.content}\n\n## 语音文件\n\n${speech.filename}`
+  content: `# 生成的内容\n\n${content.content}\n\n## A3语音文件\n\n${speech.filename}`
 });
+```
+
+### 端到端测试
+
+```javascript
+// 运行完整的端到端测试
+const testResult = await client.endToEndTest();
+console.log('测试结果:', testResult);
 ```
 
 ## 开发指南
